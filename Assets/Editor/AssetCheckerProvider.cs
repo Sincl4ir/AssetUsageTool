@@ -21,8 +21,23 @@ namespace Pampero.Editor
                     return true;
                 default:
                     CheckAssetType(asset);
-                    Debug.LogError("Could not get a proper IAssetUsageChecker for the selected asset");
+                    Debug.LogWarning("Could not get a proper IAssetUsageChecker for the selected asset");
                     return false; 
+            }
+        }
+
+        public static void HandleUsageCheckSearchers(AssetCheckType search, out IAssetUsageSearchHandler iAssetUsageSearchHandler)
+        {
+            iAssetUsageSearchHandler = null;
+
+            switch (search)
+            {
+                case AssetCheckType.SceneCheck:
+                    iAssetUsageSearchHandler = new SceneSearchHandler();
+                    break;
+                case AssetCheckType.AssetDatabaseCheck:
+                    iAssetUsageSearchHandler = new AssetDatabaseSearchHandler();
+                    break;
             }
         }
 
@@ -39,7 +54,7 @@ namespace Pampero.Editor
 
             if (assetType == null)
             {
-                Debug.Log("Unknown Asset Type");
+                Debug.LogWarning("Unknown Asset Type");
                 return;
             }
 

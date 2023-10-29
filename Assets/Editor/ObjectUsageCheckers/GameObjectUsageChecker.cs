@@ -12,8 +12,11 @@ namespace Pampero.Editor
         public override bool CheckAssetUsage(out List<Object> objectsUsingAsset)
         {
             Debug.Log("Checking usage for GameObject");
+            HandleAssetUsageSearch(_myAsset, AssetCheckType.SceneCheck);
+            HandleAssetUsageSearch(_myAsset, AssetCheckType.AssetDatabaseCheck);
+
             objectsUsingAsset = _objectsUsingAssetList;
-            return false;
+            return _objectsUsingAssetList.Count > 0;
         }
 
         private void CheckPrefabOriginalGUID(GameObject go)

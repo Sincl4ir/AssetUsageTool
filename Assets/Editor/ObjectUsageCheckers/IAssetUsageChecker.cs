@@ -9,7 +9,6 @@ namespace Pampero.Editor
     {
         bool CheckAssetUsage(out List<Object> objectUsingAsset);
     }
-
 }
 //EOF.
 #endif
