@@ -16,6 +16,8 @@ namespace Pampero.Editor
         private const string EDITOR_WINDOW_PATH = "Custom/Asset Usage Checker";
         private const string SEARCH_BOX_TITTLE = "Select an asset to check usage:";
         private const string INACTIVE_SCENES_WARNING_MESSAGE = "Some objects are not loaded because the scene where they belong is not currently active.";
+        private const string UNUSED_ASSET_MESSAGE = "Asset is not being used";
+
         private const int TOP_PADDING = 15;
         private const int LEFT_PADDING = 15;
         private const int RIGHT_PADDING = 15;
@@ -30,6 +32,7 @@ namespace Pampero.Editor
         private ReorderableList _reorderableList; 
         private bool _showReorderableList = false;
         private bool _activeUsageCheck = false;
+        private bool _assetUsed = true;
 
         [MenuItem(EDITOR_WINDOW_PATH)]
         public static void ShowWindow()
@@ -94,6 +97,7 @@ namespace Pampero.Editor
             GUILayout.Space(UI_ELEMENTS_SPACE);
             HandleReordableListRefresh();
             GUILayout.Space(UI_ELEMENTS_SPACE);
+            DisplayUnusedAssetMessageBox(_assetUsed);
             HandleInactiveScenesWarningChecks();
         }
 
@@ -146,8 +150,6 @@ namespace Pampero.Editor
             HandleAssetSelectionChecks();
         }
 
-        
-
         private void HandleAssetSelectionChecks()
         {
             if (_newSelectedAsset == _selectedAsset) { return; }
@@ -168,7 +170,8 @@ namespace Pampero.Editor
 
         private void HandleAssetUsageRequest(Object asset)
         {
-            _showReorderableList = _assetUsageController.HandleCheckAssetUsageRequest(asset, out _objectsUsingAsset);
+            _assetUsed = _assetUsageController.HandleCheckAssetUsageRequest(asset, out _objectsUsingAsset);
+            _showReorderableList = _assetUsed;
             _reorderableList.list = _objectsUsingAsset;
         }
         
@@ -178,11 +181,15 @@ namespace Pampero.Editor
             _reorderableList.DoLayoutList();
         }
 
-        
-
         public void DisplayInactiveScenesWarning()
         {
             EditorGUILayout.HelpBox(INACTIVE_SCENES_WARNING_MESSAGE, MessageType.Warning);
+        }
+
+        public void DisplayUnusedAssetMessageBox(bool used)
+        {
+            if (used) { return; }
+            EditorGUILayout.HelpBox(UNUSED_ASSET_MESSAGE, MessageType.Info);
         }
 
         private void HandleInactiveScenesWarningChecks()
