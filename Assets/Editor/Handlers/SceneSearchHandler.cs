@@ -8,17 +8,36 @@ using UnityEngine.SceneManagement;
 
 namespace Pampero.Editor
 {
+    public class SceneSearcher : SceneSearchHandler, ICustomSearcher
+    {
+        public void PerformUsageCheckBasedOnCheckerType(Object asset, out List<Object> objectsUsingAssetInScene)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class AssetDatabaseSearcher : AssetDatabaseSearchHandler, ICustomSearcher
+    {
+        public void PerformUsageCheckBasedOnCheckerType(Object asset, out List<Object> objectsUsingAssetInScene)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
     public class SceneSearchHandler : AssetUsageSearchHandler
     {
         protected OpenSceneMode _openSceneMode = OpenSceneMode.Additive; 
         protected Scene _originalActiveScene;
         protected Scene _lastOpenedScene;
 
+        public SceneSearchHandler() : base() { }
+      
         #region Public
         public override bool HandleAssetUsageSearch(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAssetInScene)
         {
             //CheckMonoScriptUsageInScene(asset, out objectsUsingAssetInScene);
-            PerformUsageCheckBasedOnCheckerType(asset, objectUsageChecker, out objectsUsingAssetInScene);
+            //PerformUsageCheckBasedOnCheckerType(asset, objectUsageChecker, out objectsUsingAssetInScene);
+            _customSearchHandler.PerformUsageCheckBasedOnCheckerType(asset, out objectsUsingAssetInScene);
             return objectsUsingAssetInScene.Count > 0;
         }
 

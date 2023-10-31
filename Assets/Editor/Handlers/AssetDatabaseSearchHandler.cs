@@ -6,6 +6,8 @@ namespace Pampero.Editor
 {
     public class AssetDatabaseSearchHandler : AssetUsageSearchHandler
     {
+        public AssetDatabaseSearchHandler() : base() { }
+
         protected override void PerformUsageCheckBasedOnCheckerType(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAssets)
         {
             switch (objectUsageChecker)

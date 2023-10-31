@@ -7,6 +7,26 @@ namespace Pampero.Editor
 {
     public abstract class AssetUsageSearchHandler : IAssetUsageSearchHandler
     {
+        protected ICustomSearcher _customSearchHandler;
+
+        public AssetUsageSearchHandler()
+        {
+            _customSearchHandler = AssetUsageSearchHandler.GetCustomSearchHandler(this);
+        }
+
+        public static ICustomSearcher GetCustomSearchHandler(AssetUsageSearchHandler assetUsageSearchHandler)
+        {
+            switch (assetUsageSearchHandler)
+            {
+                case SceneSearchHandler:
+                    return new SceneSearcher();
+                case AssetDatabaseSearchHandler:
+                    return new AssetDatabaseSearcher();
+                default:
+                    return null;
+            }
+        }
+
         #region Public
         public virtual bool HandleAssetUsageSearch(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAsset)
         {
