@@ -15,7 +15,7 @@ The Asset Usage Tool is a Unity Editor extension that allows you to check the us
 
 ### Prerequisites
 
-- Unity 2021.3.17f or later.
+- Unity 2022.3.2f or later.
 
 ### Installation
 
