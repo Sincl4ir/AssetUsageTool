@@ -30,7 +30,7 @@ The Asset Usage Tool is a Unity Editor extension that allows you to check the us
 
 ### How to Use
 
-OPTION A:
+`OPTION A:`
 1. Open the Unity Editor.
 2. Go to the "Custom" menu.
 3. Select "Asset Usage Checker" to open the tool.
@@ -38,7 +38,7 @@ OPTION A:
 5. Click the "Check Usage" button to start the search.
 6. The tool will display a list of scenes, prefabs, or script files that use the selected asset.
 
-OPTION B:
+`OPTION B:`
 1. Right click the asset you want to perform a search and select "Check Asset Usage in the Project".
 
 ### Know Bugs:
