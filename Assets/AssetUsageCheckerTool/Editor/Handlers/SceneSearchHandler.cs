@@ -88,20 +88,27 @@ namespace Pampero.Editor
                 return false;
             }
 
-            _lastOpenedScene = EditorSceneManager.OpenScene(scenePath, _openSceneMode);
+            try
+            {
+                _lastOpenedScene = EditorSceneManager.OpenScene(scenePath, _openSceneMode);
+                // Find all GameObjects in the scene.
+                sceneGameObjects = _lastOpenedScene.GetRootGameObjects();
 
-            // Find all GameObjects in the scene.
-            sceneGameObjects = _lastOpenedScene.GetRootGameObjects();
-
-            return true;
+                return true;
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"Error opening scene: {e.Message}");
+                return false;
+            }
         }
+
 
         private void CanAddSceneGameObjectsToObjectsUsingAssetList(List<Object> objectsUsingAsset, List<Object> objectsUsingAssetInScene)
         {
             if (_originalActiveScene != _lastOpenedScene) { return; }
             objectsUsingAsset.AddRange(objectsUsingAssetInScene);
         }
-
 
         private void GetCurrentActiveScene()
         {

@@ -15,7 +15,7 @@ namespace Pampero.Editor
     {
         private const string WINDOW_TITTLE = "Asset Usage Checker";
         private const string MAIN_BUTTON_TITTLE = "Check Usage";
-        private const string REORDABLE_LIST_TITTLE = "Objects Using Asset in Scene";
+        private const string REORDABLE_LIST_TITTLE = "Objects Using Asset in Project";
         private const string EDITOR_WINDOW_PATH = "Custom/Asset Usage Checker";
         private const string SEARCH_BOX_TITTLE = "Select an asset to check usage:";
         private const string INACTIVE_SCENES_WARNING_MESSAGE = "Some objects are not loaded because the scene where they belong is not currently active.";
