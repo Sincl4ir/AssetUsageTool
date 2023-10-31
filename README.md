@@ -1,9 +1,3 @@
-# AssetUsageTool - WORK IN PROGRESS
-
-Unity asset usage tool
-
-
-
 # Asset Usage Tool
 
 ## Overview
