@@ -5,13 +5,16 @@ using UnityEngine;
 
 namespace Pampero.Editor
 {
+    /// <summary>
+    /// Checks the usage of a GameObject Asset.
+    /// </summary>
     public class GameObjectUsageChecker : ObjectUsageChecker
     {
         public GameObjectUsageChecker(Object asset) : base(asset) {}
 
         public override bool CheckAssetUsage(out List<Object> objectsUsingAsset)
         {
-            Debug.Log("Checking usage for GameObject");
+            //Debug.Log("Checking usage for GameObject");
             HandleAssetUsageSearch(_myAsset, AssetCheckType.SceneCheck);
             HandleAssetUsageSearch(_myAsset, AssetCheckType.AssetDatabaseCheck);
 
@@ -29,7 +32,7 @@ namespace Pampero.Editor
                 string assetPath = AssetDatabase.GetAssetPath(sourcePrefab);
                 // Get the GUID of the selected asset (original prefab).
                 string prefabGUID = AssetDatabase.AssetPathToGUID(assetPath);
-                Debug.Log($"{go.name}: Asset Path = {assetPath}, Asset GUID = {prefabGUID}");
+                //Debug.Log($"{go.name}: Asset Path = {assetPath}, Asset GUID = {prefabGUID}");
             }
         }
     }

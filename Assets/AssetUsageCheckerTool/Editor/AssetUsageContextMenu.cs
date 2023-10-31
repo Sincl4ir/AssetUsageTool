@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Pampero.Editor
 {
+    /// <summary>
+    /// Provides a context menu item to check the usage of a selected asset within the project.
+    /// </summary>
     public static class AssetUsageContextMenu
     {
         private const string CONTEXT_DISPLAY_TITTLE = "Assets/Check Asset Usage in the Project";

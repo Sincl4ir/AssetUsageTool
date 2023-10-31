@@ -8,6 +8,9 @@ using UnityEngine.SceneManagement;
 
 namespace Pampero.Editor
 {
+    /// <summary>
+    /// A class that handles asset usage searches specific to scenes, extending the AssetUsageSearchHandler base class.
+    /// </summary>
     public class SceneSearchHandler : AssetUsageSearchHandler
     {
         protected OpenSceneMode _openSceneMode = OpenSceneMode.Additive; 
@@ -17,7 +20,6 @@ namespace Pampero.Editor
         #region Public
         public override bool HandleAssetUsageSearch(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAssetInScene)
         {
-            //CheckMonoScriptUsageInScene(asset, out objectsUsingAssetInScene);
             PerformUsageCheckBasedOnCheckerType(asset, objectUsageChecker, out objectsUsingAssetInScene);
             return objectsUsingAssetInScene.Count > 0;
         }
@@ -36,6 +38,11 @@ namespace Pampero.Editor
             }
         }
 
+        /// <summary>
+        /// Checks if the specified asset is used as a MonoScript component in scenes.
+        /// </summary>
+        /// <param name="asset">The asset to check for usage in scenes.</param>
+        /// <param name="objectsUsingAsset">A list of objects that are using the specified asset in scenes.</param>
         public void CheckMonoScriptUsageInScene(Object asset, out List<Object> objectsUsingAsset)
         {
             objectsUsingAsset = new List<Object>();

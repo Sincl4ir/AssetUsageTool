@@ -5,8 +5,17 @@ using UnityEngine;
 
 namespace Pampero.Editor
 {
+    /// <summary>
+    /// Provides methods for creating asset usage checkers and asset usage search handlers.
+    /// </summary>
     public static class AssetCheckerProvider
     {
+        /// <summary>
+        /// Tries to create an asset usage checker for the specified asset.
+        /// </summary>
+        /// <param name="asset">The asset to check usage for.</param>
+        /// <param name="iAssetUsageChecker">The created asset usage checker (if successful).</param>
+        /// <returns>True if an asset usage checker is created successfully; otherwise, false.</returns>
         public static bool TryCreateChecker(Object asset, out IAssetUsageChecker iAssetUsageChecker)
         {
             iAssetUsageChecker = null;
@@ -26,6 +35,11 @@ namespace Pampero.Editor
             }
         }
 
+        /// <summary>
+        /// Handles the creation of asset usage search handlers based on the specified search type.
+        /// </summary>
+        /// <param name="search">The type of asset usage search to perform.</param>
+        /// <param name="iAssetUsageSearchHandler">The created asset usage search handler (if successful).</param>
         public static void HandleUsageCheckSearchers(AssetCheckType search, out IAssetUsageSearchHandler iAssetUsageSearchHandler)
         {
             iAssetUsageSearchHandler = null;

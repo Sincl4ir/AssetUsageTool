@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace Pampero.Editor
 {
+    /// <summary>
+    /// The main editor window for checking asset usage in the project.
+    /// </summary>
     public class AssetUsageEditorTool : EditorWindow
     {
         private const string WINDOW_TITTLE = "Asset Usage Checker";
@@ -37,10 +40,15 @@ namespace Pampero.Editor
         [MenuItem(EDITOR_WINDOW_PATH)]
         public static void ShowWindow()
         {
+            // Displays the Asset Usage Checker window.
             var window = GetWindow<AssetUsageEditorTool>(WINDOW_TITTLE);
             window.Show();
         }
 
+        /// <summary>
+        /// Handles a context menu request to check asset usage in the project.
+        /// </summary>
+        /// <param name="asset">The asset to check usage for.</param>
         public static void HandleCheckAssetUsageContextRequest(Object asset)
         {
             if (asset == null) { return; }
@@ -53,6 +61,7 @@ namespace Pampero.Editor
 
         private void OnEnable()
         {
+            // Initialize the controller and subscribe to sceneOpened event.
             InitializeController();
             InitializeReordableList();
             EditorSceneManager.sceneOpened -= OnSceneOpened;
@@ -61,6 +70,7 @@ namespace Pampero.Editor
 
         private void OnDisable()
         {
+            // Unsubscribe from the sceneOpened event.
             EditorSceneManager.sceneOpened -= OnSceneOpened;
         }
 
@@ -68,12 +78,14 @@ namespace Pampero.Editor
 
         private void OnGUI()
         {
+            // Organizes the layout and handles different UI elements.
             HandleTopUIWindowConfiguration();
             HandleSearchUISettings();
             HandleSearchResultsUISettings();
             HandleBottomUIWindowConfiguration();
         }
 
+        // Helper methods for handling UI layout and components:
         private static void HandleTopUIWindowConfiguration()
         {
             GUILayout.Space(TOP_PADDING);
@@ -118,11 +130,13 @@ namespace Pampero.Editor
 
         private void InitializeController()
         {
+            // Initializes the Asset Usage Controller.
             _assetUsageController = new AssetUsageController(this);
         }
 
         private void InitializeReordableList()
         {
+            // Initializes the ReorderableList for displaying objects.
             _reorderableList = new ReorderableList(_objectsUsingAsset, typeof(Object), true, true, false, false);
             _reorderableList.drawHeaderCallback = rect => EditorGUI.LabelField(rect, REORDABLE_LIST_TITTLE);
             _reorderableList.drawElementCallback = (rect, index, active, focused) =>
@@ -133,25 +147,28 @@ namespace Pampero.Editor
 
         private void OnSceneOpened(UnityEngine.SceneManagement.Scene scene, OpenSceneMode mode)
         {
+            // Clears the list when a scene is opened (if not during an active usage check).
             if (_activeUsageCheck) { return; }
-            //Debug.Log($"{scene.name} was opened with mode: {mode}");
             ReordableListClearUp();
         }
 
         public void ReordableListClearUp()
         {
+            // Clears the list of objects.
             _showReorderableList = false; 
             _objectsUsingAsset.Clear(); 
         }
 
         private void HandleAssetSelection()
         {
+            // Handles asset selection in the UI.
             _newSelectedAsset = EditorGUILayout.ObjectField(_selectedAsset, typeof(Object), false);
             HandleAssetSelectionChecks();
         }
 
         private void HandleAssetSelectionChecks()
         {
+            // Checks if the asset selection has changed.
             if (_newSelectedAsset == _selectedAsset) { return; }
 
             _selectedAsset = _newSelectedAsset;
@@ -160,6 +177,7 @@ namespace Pampero.Editor
 
         private void HandleCheckUsageButtonPress()
         {
+            // Handles the "Check Usage" button press.
             if (!GUILayout.Button(MAIN_BUTTON_TITTLE, GUILayout.MaxWidth(MAX_BUTTON_WIDTH), GUILayout.ExpandWidth(false))) { return; }
             if (_selectedAsset == null) { return; }
 
@@ -170,6 +188,7 @@ namespace Pampero.Editor
 
         private void HandleAssetUsageRequest(Object asset)
         {
+            // Requests asset usage check from the controller.
             _assetUsed = _assetUsageController.HandleCheckAssetUsageRequest(asset, out _objectsUsingAsset);
             _showReorderableList = _assetUsed;
             _reorderableList.list = _objectsUsingAsset;
@@ -177,23 +196,27 @@ namespace Pampero.Editor
         
         private void HandleReordableListRefresh()
         {
+            // Refreshes the ReorderableList for displaying objects.
             if (!_showReorderableList) { return; }
             _reorderableList.DoLayoutList();
         }
 
         public void DisplayInactiveScenesWarning()
         {
+            // Displays a warning message about inactive scenes.
             EditorGUILayout.HelpBox(INACTIVE_SCENES_WARNING_MESSAGE, MessageType.Warning);
         }
 
         public void DisplayUnusedAssetMessageBox(bool used)
         {
+            // Displays an informational message for unused assets.
             if (used) { return; }
             EditorGUILayout.HelpBox(UNUSED_ASSET_MESSAGE, MessageType.Info);
         }
 
         private void HandleInactiveScenesWarningChecks()
         {
+            // Checks for and displays warnings about inactive scenes.
             _assetUsageController.HandleInactiveScenesWarning(_objectsUsingAsset);
         }
     }
