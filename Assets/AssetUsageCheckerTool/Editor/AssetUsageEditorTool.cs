@@ -156,6 +156,7 @@ namespace Pampero.Editor
         {
             // Clears the list of objects.
             _showReorderableList = false; 
+            if (_objectsUsingAsset == null) { return; }
             _objectsUsingAsset.Clear(); 
         }
 
