@@ -88,6 +88,13 @@ namespace Pampero.Editor
                 return false;
             }
 
+            //Avoid loading scenes that belong to read-only packages
+            if (scenePath.StartsWith("Packages/")) 
+            {
+                Debug.LogWarning($"Scene {scenePath} won't be loaded since it belongs to a read-only package");
+                return false; 
+            }
+
             try
             {
                 _lastOpenedScene = EditorSceneManager.OpenScene(scenePath, _openSceneMode);
