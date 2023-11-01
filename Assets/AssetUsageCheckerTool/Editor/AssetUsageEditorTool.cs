@@ -18,7 +18,7 @@ namespace Pampero.Editor
         private const string REORDABLE_LIST_TITTLE = "Objects Using Asset in Project";
         private const string EDITOR_WINDOW_PATH = "Custom/Asset Usage Checker";
         private const string SEARCH_BOX_TITTLE = "Select an asset to check usage:";
-        private const string INACTIVE_SCENES_WARNING_MESSAGE = "Some objects are not loaded because the scene where they belong is not currently active.";
+        private const string INACTIVE_SCENES_WARNING_MESSAGE = "Some objects are not loaded because the scene/s where they belong are not currently active/loaded.";
         private const string UNUSED_ASSET_MESSAGE = "Asset is not being used";
 
         private const int TOP_PADDING = 15;
@@ -218,6 +218,7 @@ namespace Pampero.Editor
         private void HandleInactiveScenesWarningChecks()
         {
             // Checks for and displays warnings about inactive scenes.
+            if (_objectsUsingAsset == null) { return; }
             _assetUsageController.HandleInactiveScenesWarning(_objectsUsingAsset);
         }
     }
