@@ -37,10 +37,10 @@ The Asset Usage Tool is a Unity Editor extension that allows you to check the us
 
 ### Know Bugs:
 
-There is an issue loading scenes that are part of read-only packages. 
+There is an issue loading scenes that are part of read-only packages. --- FIXED
 
 ### To do list:
 
 * Refactor handlers to segregate checks depending on ObjectUsageChecker types from the class itself.
-* Testings (Diff unity versions, diferents scenarios)
 * Refactor View to read UI settings from scriptable
+* Test functionallity with nested prefabs
