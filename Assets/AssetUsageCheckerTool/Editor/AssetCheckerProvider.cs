@@ -10,6 +10,7 @@ namespace Pampero.Editor
     /// </summary>
     public static class AssetCheckerProvider
     {
+        #region Public
         /// <summary>
         /// Tries to create an asset usage checker for the specified asset.
         /// </summary>
@@ -19,20 +20,11 @@ namespace Pampero.Editor
         public static bool TryCreateChecker(Object asset, out IAssetUsageChecker iAssetUsageChecker)
         {
             iAssetUsageChecker = null;
+            if (!GetAssetType(asset, out var assetType)) { return false; }
 
-            switch (asset)
-            {
-                case MonoScript:
-                    iAssetUsageChecker = new MonoScriptUsageChecker(asset);
-                    return true;
-                case GameObject:
-                    iAssetUsageChecker = new GameObjectUsageChecker(asset);
-                    return true;
-                default:
-                    CheckAssetType(asset);
-                    Debug.LogWarning("Could not get a proper IAssetUsageChecker for the selected asset");
-                    return false; 
-            }
+            iAssetUsageChecker = new ObjectUsageChecker(asset, assetType);
+
+            return true;
         }
 
         /// <summary>
@@ -54,6 +46,32 @@ namespace Pampero.Editor
                     break;
             }
         }
+        #endregion
+
+        #region Private
+        private static bool GetAssetType(Object asset, out AssetType assetType)
+        {
+            switch (asset)
+            {
+                case MonoScript:
+                    assetType = AssetType.Monoscript;
+                    break;
+                //iAssetUsageChecker = new MonoScriptUsageChecker(asset);
+                //return true;
+                case GameObject:
+                    assetType = AssetType.GameObject;
+                    break;
+                //iAssetUsageChecker = new GameObjectUsageChecker(asset);
+                //return true;
+                default:
+                    CheckAssetType(asset);
+                    Debug.LogWarning("Could not get a proper IAssetUsageChecker for the selected asset");
+                    assetType = AssetType.Unknown;
+                    return false;
+            }
+
+            return true;
+        }
 
         private static void CheckAssetType(Object asset)
         {
@@ -74,6 +92,7 @@ namespace Pampero.Editor
 
             Debug.Log($"Asset Type: {assetType.Name}");
         }
+        #endregion
     }
 }
 //EOF.

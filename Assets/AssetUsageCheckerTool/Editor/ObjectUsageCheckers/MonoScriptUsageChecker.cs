@@ -9,7 +9,7 @@ namespace Pampero.Editor
     /// </summary>
     public class MonoScriptUsageChecker : ObjectUsageChecker
     {
-        public MonoScriptUsageChecker(Object asset) : base(asset) { }
+        public MonoScriptUsageChecker(Object asset) : base(asset, AssetType.Monoscript) { }
 
         public override bool CheckAssetUsage(out List<Object> objectsUsingAsset)
         {

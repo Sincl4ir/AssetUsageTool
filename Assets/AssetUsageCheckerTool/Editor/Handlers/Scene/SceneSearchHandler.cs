@@ -26,9 +26,9 @@ namespace Pampero.Editor
 
         protected override void PerformUsageCheckBasedOnCheckerType(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAssetInScene)
         {
-            switch (objectUsageChecker)
+            switch (objectUsageChecker.AssetType)
             {
-                case MonoScriptUsageChecker:
+                case AssetType.Monoscript:
                     CheckMonoScriptUsageInScene(asset, out objectsUsingAssetInScene);
                     break;
                 default:

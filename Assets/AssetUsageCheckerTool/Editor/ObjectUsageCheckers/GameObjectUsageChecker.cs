@@ -10,7 +10,7 @@ namespace Pampero.Editor
     /// </summary>
     public class GameObjectUsageChecker : ObjectUsageChecker
     {
-        public GameObjectUsageChecker(Object asset) : base(asset) {}
+        public GameObjectUsageChecker(Object asset) : base(asset, AssetType.GameObject) {}
 
         public override bool CheckAssetUsage(out List<Object> objectsUsingAsset)
         {
