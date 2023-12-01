@@ -18,58 +18,58 @@ namespace Pampero.Editor
         protected Scene _lastOpenedScene;
 
         #region Public
-        public override bool HandleAssetUsageSearch(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAssetInScene)
-        {
-            PerformUsageCheckBasedOnCheckerType(asset, objectUsageChecker, out objectsUsingAssetInScene);
-            return objectsUsingAssetInScene.Count > 0;
-        }
+        //public override bool HandleAssetUsageSearch(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAssetInScene)
+        //{
+        //    PerformUsageCheckBasedOnCheckerType(asset, objectUsageChecker, out objectsUsingAssetInScene);
+        //    return objectsUsingAssetInScene.Count > 0;
+        //}
 
-        protected override void PerformUsageCheckBasedOnCheckerType(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAssetInScene)
-        {
-            switch (objectUsageChecker.AssetType)
-            {
-                case AssetType.Monoscript:
-                    CheckMonoScriptUsageInScene(asset, out objectsUsingAssetInScene);
-                    break;
-                default:
-                    objectsUsingAssetInScene = new List<Object>();
-                    Debug.LogWarning("There is no implementation for this ObjectUsageCheker yet");
-                    break;
-            }
-        }
+        //protected override void PerformUsageCheckBasedOnCheckerType(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAssetInScene)
+        //{
+        //    switch (objectUsageChecker.AssetType)
+        //    {
+        //        case AssetType.Monoscript:
+        //            var monoscriptHandler = new MonoscriptSearchHandler(asset, this);
+        //            monoscriptHandler.GetObjectsUsingAsset(out objectsUsingAssetInScene);
+        //            //CheckMonoScriptUsageInScene(asset, out objectsUsingAssetInScene);
+        //            break;
+        //        default:
+        //            objectsUsingAssetInScene = new List<Object>();
+        //            Debug.LogWarning("There is no implementation for this ObjectUsageCheker yet");
+        //            break;
+        //    }
+        //}
 
         /// <summary>
         /// Checks if the specified asset is used as a MonoScript component in scenes.
         /// </summary>
         /// <param name="asset">The asset to check for usage in scenes.</param>
         /// <param name="objectsUsingAsset">A list of objects that are using the specified asset in scenes.</param>
-        public void CheckMonoScriptUsageInScene(Object asset, out List<Object> objectsUsingAsset)
-        {
-            objectsUsingAsset = new List<Object>();
-            GetCurrentActiveScene();
+        //public void CheckMonoScriptUsageInScene(Object asset, out List<Object> objectsUsingAsset)
+        //{
+        //    objectsUsingAsset = new List<Object>();
+        //    GetCurrentActiveScene();
 
-            if (!TryGetAllScenePaths(out string[] scenesPath))
-            {
-                Debug.LogError("Could not get scenePaths");
-                return;
-            }
+        //    if (!TryGetAllScenePaths(out string[] scenesPath))
+        //    {
+        //        Debug.LogError("Could not get scenePaths");
+        //        return;
+        //    }
 
-            foreach (var path in scenesPath)
-            {
-                if (!TryGetGameObjectsFromScene(path, out GameObject[] sceneGOs)) { continue; }
-                if (CheckAssetUsageAsComponentInGameObjectsCollection(asset, sceneGOs, out List<Object> objectsUsingAssetInScene))
-                {
-                    AddSceneToObjectUsingAssetList(objectsUsingAsset, path);
-                    //Handle gameObjects path if scene is not active
-                    CanAddSceneGameObjectsToObjectsUsingAssetList(objectsUsingAsset, objectsUsingAssetInScene);
-                }
-                HandleSceneClosure();
-            }
-        }
-        #endregion
+        //    foreach (var path in scenesPath)
+        //    {
+        //        if (!TryGetGameObjectsFromScene(path, out GameObject[] sceneGOs)) { continue; }
+        //        if (CheckAssetUsageAsComponentInGameObjectsCollection(asset, sceneGOs, out List<Object> objectsUsingAssetInScene))
+        //        {
+        //            AddSceneToObjectUsingAssetList(objectsUsingAsset, path);
+        //            //Handle gameObjects path if scene is not active
+        //            CanAddSceneGameObjectsToObjectsUsingAssetList(objectsUsingAsset, objectsUsingAssetInScene);
+        //        }
+        //        HandleSceneClosure();
+        //    }
+        //}
 
-        #region Private 
-        private bool TryGetAllScenePaths(out string[] scenePaths)
+        public bool TryGetAllScenePaths(out string[] scenePaths)
         {
             scenePaths = AssetDatabase.FindAssets("t:Scene")
                 .Select(g => AssetDatabase.GUIDToAssetPath(g))
@@ -78,7 +78,7 @@ namespace Pampero.Editor
             return scenePaths.Length > 0;
         }
 
-        private bool TryGetGameObjectsFromScene(string scenePath, out GameObject[] sceneGameObjects)
+        public bool TryGetGameObjectsFromScene(string scenePath, out GameObject[] sceneGameObjects)
         {
             sceneGameObjects = null;
 
@@ -110,24 +110,23 @@ namespace Pampero.Editor
             }
         }
 
-
-        private void CanAddSceneGameObjectsToObjectsUsingAssetList(List<Object> objectsUsingAsset, List<Object> objectsUsingAssetInScene)
+        public void CanAddSceneGameObjectsToObjectsUsingAssetList(List<Object> objectsUsingAsset, List<Object> objectsUsingAssetInScene)
         {
             if (_originalActiveScene != _lastOpenedScene) { return; }
             objectsUsingAsset.AddRange(objectsUsingAssetInScene);
         }
 
-        private void GetCurrentActiveScene()
+        public void GetCurrentActiveScene()
         {
             _originalActiveScene = EditorSceneManager.GetActiveScene();
         }
 
-        private void AddSceneToObjectUsingAssetList(List<Object> objectsUsingAssetInScene, string path)
+        public void AddSceneToObjectUsingAssetList(List<Object> objectsUsingAssetInScene, string path)
         {
             objectsUsingAssetInScene.Add(AssetDatabase.LoadAssetAtPath<Object>(path));
         }
 
-        private void HandleSceneClosure()
+        public void HandleSceneClosure()
         {
             if (_originalActiveScene == _lastOpenedScene) { return; }
             EditorSceneManager.CloseScene(_lastOpenedScene, true);

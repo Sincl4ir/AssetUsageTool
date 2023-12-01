@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -10,14 +11,6 @@ namespace Pampero.Editor
     /// </summary>
     public abstract class AssetUsageSearchHandler : IAssetUsageSearchHandler
     {
-        #region Public
-        public virtual bool HandleAssetUsageSearch(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAsset)
-        {
-            PerformUsageCheckBasedOnCheckerType(asset, objectUsageChecker, out objectsUsingAsset);
-            return objectsUsingAsset.Count > 0;
-        }
-        #endregion
-
         #region Protected
 
         /// <summary>
@@ -27,13 +20,46 @@ namespace Pampero.Editor
         /// <param name="asset">The asset to check for usage.</param>
         /// <param name="objectUsageChecker">The checker for the asset usage.</param>
         /// <param name="objectsUsingAssetInScene">A list of objects that are using the specified asset.</param>
-        protected abstract void PerformUsageCheckBasedOnCheckerType(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAssetInScene);
+        protected virtual void PerformUsageCheckBasedOnAssetType(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAsset)
+        {
+            objectsUsingAsset = new List<Object>();
+            if (!TryGetAssetTypeHandler(asset, objectUsageChecker.AssetType, out var assetTypeHandler)) { return; }
+
+            assetTypeHandler.GetObjectsUsingAsset(out objectsUsingAsset);
+        }
+
+        protected bool TryGetAssetTypeHandler(Object asset, AssetType assetType, out IAssetTypeHandler assetTypeHandler)
+        {
+            assetTypeHandler = null;
+
+            switch (assetType)
+            {
+                case AssetType.Monoscript:
+                    assetTypeHandler = new MonoscriptSearchHandler(asset, this);
+                    return true;
+                //monoscriptHandler.GetObjectsUsingAsset(out objectsUsingAssetInScene);
+                //CheckMonoScriptUsageInScene(asset, out objectsUsingAssetInScene);
+                //case AssetType.GameObject:
+                //return new GameObjectSearchHandler(asset, this
+                default:
+                    return false;
+            }
+        }
+
+        #endregion
+
+        #region Public
+        public virtual bool HandleAssetUsageSearch(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAsset)
+        {
+            PerformUsageCheckBasedOnAssetType(asset, objectUsageChecker, out objectsUsingAsset);
+            return objectsUsingAsset.Count > 0;
+        }
 
         /// <summary>
         /// Finds all GameObjects in the project and returns an array of them.
         /// </summary>
         /// <returns>An array of all GameObjects in the project.</returns>
-        protected virtual GameObject[] FindAllGameObjectsInProject()
+        public virtual GameObject[] FindAllGameObjectsInProject()
         {
             string[] guids = AssetDatabase.FindAssets("t:GameObject");
             GameObject[] gameObjects = new GameObject[guids.Length];
@@ -54,7 +80,7 @@ namespace Pampero.Editor
         /// <param name="gameObjects">An array of GameObjects to check for asset usage.</param>
         /// <param name="gameObjectsUsingAsset">A list of GameObjects that are using the specified asset.</param>
         /// <returns>True if the asset is used in any of the provided GameObjects; otherwise, false.</returns>
-        protected virtual bool CheckAssetUsageAsComponentInGameObjectsCollection(Object asset, GameObject[] gameObjects, out List<Object> gameObjectsUsingAsset)
+        public virtual bool CheckAssetUsageAsComponentInGameObjectsCollection(Object asset, GameObject[] gameObjects, out List<Object> gameObjectsUsingAsset)
         {
             gameObjectsUsingAsset = new List<Object>();
             foreach (GameObject go in gameObjects)
@@ -73,7 +99,7 @@ namespace Pampero.Editor
         /// <param name="rootObject">The GameObject to check for asset usage.</param>
         /// <param name="components">An array of components in the GameObject to check.</param>
         /// <returns>True if the asset is used as a component in the GameObject; otherwise, false.</returns>
-        protected virtual bool IsAssetUsedAsComponent(Object asset, GameObject rootObject, Component[] components)
+        public virtual bool IsAssetUsedAsComponent(Object asset, GameObject rootObject, Component[] components)
         {
             foreach (Component component in components)
             {

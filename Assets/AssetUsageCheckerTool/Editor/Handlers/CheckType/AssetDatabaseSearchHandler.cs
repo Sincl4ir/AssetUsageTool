@@ -1,5 +1,6 @@
 ﻿#if UNITY_EDITOR
-using System.Collections.Generic;
+
+using UnityEditor;
 using UnityEngine;
 
 namespace Pampero.Editor
@@ -9,17 +10,17 @@ namespace Pampero.Editor
     /// </summary>
     public class AssetDatabaseSearchHandler : AssetUsageSearchHandler
     {
-        protected override void PerformUsageCheckBasedOnCheckerType(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAssets)
+        public void CheckPrefabOriginalGUID(GameObject go)
         {
-            switch (objectUsageChecker.AssetType)
+            PrefabInstanceStatus prefabStatus = PrefabUtility.GetPrefabInstanceStatus(go);
+
+            if (prefabStatus == PrefabInstanceStatus.Connected || prefabStatus == PrefabInstanceStatus.Disconnected)
             {
-                case AssetType.Monoscript:
-                    CheckAssetUsageAsComponentInGameObjectsCollection(asset, FindAllGameObjectsInProject(), out objectsUsingAssets);
-                    break;
-                default:
-                    objectsUsingAssets = new List<Object>();
-                    Debug.LogWarning("There is no implementation for this ObjectUsageCheker yet");
-                    break;
+                GameObject sourcePrefab = PrefabUtility.GetCorrespondingObjectFromSource(go);
+                string assetPath = AssetDatabase.GetAssetPath(sourcePrefab);
+                // Get the GUID of the selected asset (original prefab).
+                string prefabGUID = AssetDatabase.AssetPathToGUID(assetPath);
+                //Debug.Log($"{go.name}: Asset Path = {assetPath}, Asset GUID = {prefabGUID}");
             }
         }
     }
