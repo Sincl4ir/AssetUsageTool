@@ -32,7 +32,7 @@ namespace Pampero.Editor
         /// </summary>
         /// <param name="search">The type of asset usage search to perform.</param>
         /// <param name="iAssetUsageSearchHandler">The created asset usage search handler (if successful).</param>
-        public static void HandleUsageCheckSearchers(AssetCheckType search, out IAssetUsageSearchHandler iAssetUsageSearchHandler)
+        public static void GetProperAssetSearchHandler(AssetCheckType search, out IAssetUsageSearchHandler iAssetUsageSearchHandler)
         {
             iAssetUsageSearchHandler = null;
 
@@ -46,10 +46,22 @@ namespace Pampero.Editor
                     break;
             }
         }
-        #endregion
 
-        #region Private
-        private static bool GetAssetType(Object asset, out AssetType assetType)
+        public static bool TryGetAssetSearcher(AssetType assetType, out BaseAssetSearcher searcher)
+        {
+            searcher = assetType switch
+            {
+                AssetType.Monoscript => new MonoScriptSearcher(),
+                _ => null
+            };
+
+            return searcher != null;
+        }
+
+#endregion
+
+#region Private
+private static bool GetAssetType(Object asset, out AssetType assetType)
         {
             switch (asset)
             {

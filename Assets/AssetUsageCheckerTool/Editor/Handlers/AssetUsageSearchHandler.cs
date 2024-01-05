@@ -33,7 +33,7 @@ namespace Pampero.Editor
         /// Finds all GameObjects in the project and returns an array of them.
         /// </summary>
         /// <returns>An array of all GameObjects in the project.</returns>
-        protected virtual GameObject[] FindAllGameObjectsInProject()
+        public virtual GameObject[] FindAllGameObjectsInProject()
         {
             string[] guids = AssetDatabase.FindAssets("t:GameObject");
             GameObject[] gameObjects = new GameObject[guids.Length];
@@ -54,7 +54,7 @@ namespace Pampero.Editor
         /// <param name="gameObjects">An array of GameObjects to check for asset usage.</param>
         /// <param name="gameObjectsUsingAsset">A list of GameObjects that are using the specified asset.</param>
         /// <returns>True if the asset is used in any of the provided GameObjects; otherwise, false.</returns>
-        protected virtual bool CheckAssetUsageAsComponentInGameObjectsCollection(Object asset, GameObject[] gameObjects, out List<Object> gameObjectsUsingAsset)
+        public bool CheckAssetUsageAsComponentInGameObjectsCollection(Object asset, GameObject[] gameObjects, out List<Object> gameObjectsUsingAsset)
         {
             gameObjectsUsingAsset = new List<Object>();
             foreach (GameObject go in gameObjects)
