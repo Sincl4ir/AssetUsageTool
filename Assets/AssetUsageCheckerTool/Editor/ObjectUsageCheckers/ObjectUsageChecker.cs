@@ -18,8 +18,6 @@ namespace Pampero.Editor
     public class ObjectUsageChecker : IAssetUsageChecker
     {
         protected Object _myAsset;
-        protected string _assetGUID;
-        protected string _assetPath;
         protected List<Object> _objectsUsingAssetList;
 
         public AssetType AssetType { get; private set; }
@@ -34,11 +32,8 @@ namespace Pampero.Editor
         {
             _myAsset = myAsset;
             AssetType = assetType;
-            _assetPath = AssetDatabase.GetAssetPath(myAsset);
-            //Debug.Log($"Selected asset path is: {_assetPath}");
-            // Get the GUID of the selected asset (original prefab).
-            _assetGUID = AssetDatabase.AssetPathToGUID(_assetPath);
-            //Debug.Log($"Selected asset ID is: {_assetGUID}");
+            //_assetPath = AssetDatabase.GetAssetPath(myAsset);
+            //_assetGUID = AssetDatabase.AssetPathToGUID(_assetPath);
             _objectsUsingAssetList = new();
         }
         #endregion
@@ -71,7 +66,7 @@ namespace Pampero.Editor
         /// <returns>The asset usage search handler for the specified search type.</returns>
         protected IAssetUsageSearchHandler GetAssetUsageSearchHandler(AssetCheckType searchType)
         {
-            AssetCheckerProvider.HandleUsageCheckSearchers(searchType, out var searchHandler);
+            AssetCheckerProvider.GetProperAssetSearchHandler(searchType, out var searchHandler);
             return searchHandler;
         }
     }
