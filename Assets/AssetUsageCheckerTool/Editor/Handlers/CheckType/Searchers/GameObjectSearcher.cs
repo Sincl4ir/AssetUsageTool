@@ -12,28 +12,36 @@ namespace Pampero.Editor
     {
         public override void CheckAssetUsageInAssetDatabase(Object asset, AssetDatabaseSearchHandler handler, out List<Object> objectsUsingAsset)
         {
-            throw new System.NotImplementedException();
+            objectsUsingAsset = new List<Object>();
+
+            // Example: Check usage in prefabs
+            GameObject[] prefabInstances = handler.FindAllPrefabsFromAssetDataBase(asset);
+            Debug.Log($"prefanInstances size: " + prefabInstances.Length);
+            handler.CheckAssetUsageAsGameObjectInGameObjectsCollection(asset, prefabInstances, out objectsUsingAsset);
         }
 
         public override void CheckAssetUsageInScene(Object asset, SceneSearchHandler handler, out List<Object> objectsUsingAsset)
         {
-            throw new System.NotImplementedException();
+            objectsUsingAsset = new List<Object>();
+            handler.GetCurrentActiveScene();
+            if (!handler.TryGetAllScenePaths(out string[] scenesPath))
+            {
+                Debug.LogError("Could not get scenePaths");
+                return;
+            }
+
+            foreach (var path in scenesPath)
+            {
+                if (!handler.TryGetGameObjectsFromScene(path, out GameObject[] sceneGOs)) { continue; }
+                if (handler.CheckAssetUsageAsGameObjectInGameObjectsCollection(asset, sceneGOs, out List<Object> objectsUsingAssetInScene))
+                {
+                    handler.AddSceneToObjectUsingAssetList(objectsUsingAsset, path);
+                    // Handle gameObjects path if the scene is not active
+                    handler.CanAddSceneGameObjectsToObjectsUsingAssetList(objectsUsingAsset, objectsUsingAssetInScene);
+                }
+                handler.HandleSceneClosure();
+            }
         }
-
-
-        //private void CheckPrefabOriginalGUID(GameObject go)
-        //{
-        //    PrefabInstanceStatus prefabStatus = PrefabUtility.GetPrefabInstanceStatus(go);
-
-        //    if (prefabStatus == PrefabInstanceStatus.Connected || prefabStatus == PrefabInstanceStatus.Disconnected)
-        //    {
-        //        GameObject sourcePrefab = PrefabUtility.GetCorrespondingObjectFromSource(go);
-        //        string assetPath = AssetDatabase.GetAssetPath(sourcePrefab);
-        //        // Get the GUID of the selected asset (original prefab).
-        //        string prefabGUID = AssetDatabase.AssetPathToGUID(assetPath);
-        //        //Debug.Log($"{go.name}: Asset Path = {assetPath}, Asset GUID = {prefabGUID}");
-        //    }
-
     }
 }
 //EOF.

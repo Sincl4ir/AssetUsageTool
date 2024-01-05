@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -29,10 +30,6 @@ namespace Pampero.Editor
         /// <param name="objectsUsingAssetInScene">A list of objects that are using the specified asset.</param>
         protected abstract void PerformUsageCheckBasedOnCheckerType(Object asset, ObjectUsageChecker objectUsageChecker, out List<Object> objectsUsingAssetInScene);
 
-        /// <summary>
-        /// Finds all GameObjects in the project and returns an array of them.
-        /// </summary>
-        /// <returns>An array of all GameObjects in the project.</returns>
         public virtual GameObject[] FindAllGameObjectsInProject()
         {
             string[] guids = AssetDatabase.FindAssets("t:GameObject");
@@ -47,13 +44,6 @@ namespace Pampero.Editor
             return gameObjects;
         }
 
-        /// <summary>
-        /// Checks if the specified asset is used as a component in a collection of GameObjects.
-        /// </summary>
-        /// <param name="asset">The asset to check for usage as a component.</param>
-        /// <param name="gameObjects">An array of GameObjects to check for asset usage.</param>
-        /// <param name="gameObjectsUsingAsset">A list of GameObjects that are using the specified asset.</param>
-        /// <returns>True if the asset is used in any of the provided GameObjects; otherwise, false.</returns>
         public bool CheckAssetUsageAsComponentInGameObjectsCollection(Object asset, GameObject[] gameObjects, out List<Object> gameObjectsUsingAsset)
         {
             gameObjectsUsingAsset = new List<Object>();
@@ -66,13 +56,6 @@ namespace Pampero.Editor
             return gameObjectsUsingAsset.Count > 0;
         }
 
-        /// <summary>
-        /// Checks if the specified asset is used as a component in a GameObject.
-        /// </summary>
-        /// <param name="asset">The asset to check for usage as a component.</param>
-        /// <param name="rootObject">The GameObject to check for asset usage.</param>
-        /// <param name="components">An array of components in the GameObject to check.</param>
-        /// <returns>True if the asset is used as a component in the GameObject; otherwise, false.</returns>
         protected virtual bool IsAssetUsedAsComponent(Object asset, GameObject rootObject, Component[] components)
         {
             foreach (Component component in components)
@@ -94,6 +77,62 @@ namespace Pampero.Editor
 
             return false;
         }
+
+        public bool CheckAssetUsageAsGameObjectInGameObjectsCollection(Object asset, GameObject[] gameObjects, out List<Object> gameObjectsUsingAsset)
+        {
+            gameObjectsUsingAsset = new List<Object>();
+            foreach (GameObject go in gameObjects)
+            {
+                if (!IsAssetUsedAsGameObject(asset, go) && !IsAssetUsedAsNestedPrefab(asset, go)) { continue; }
+                gameObjectsUsingAsset.Add(go);
+            }
+
+            return gameObjectsUsingAsset.Count > 0;
+        }
+
+        protected virtual bool IsAssetUsedAsGameObject(Object asset, GameObject gameObject)
+        {
+            if (gameObject == asset) { return true; }
+            if (!PrefabUtility.IsPartOfPrefabInstance(gameObject)) { return false; }
+
+            GameObject prefabRoot = PrefabUtility.GetCorrespondingObjectFromSource(gameObject) as GameObject;
+            if (prefabRoot == null) { return false; }
+
+            if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(prefabRoot, out string prefabGUID, out long _)) { return false; }
+
+            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset, out string assetGUID, out long _);
+            return prefabGUID == assetGUID;
+        }
+
+        protected virtual bool IsAssetUsedAsNestedPrefab(Object asset, GameObject gameObject)
+        {
+            foreach (Transform childTransform in gameObject.transform)
+            {
+                if (!PrefabUtility.IsPartOfPrefabInstance(childTransform.gameObject)) { continue; }
+
+                GameObject prefabRoot = PrefabUtility.GetCorrespondingObjectFromSource(childTransform.gameObject) as GameObject;
+                if (prefabRoot == null) { return false; }
+                
+                if (IsAssetUsedAsGameObject(asset, prefabRoot)) { return true; }
+                if (IsAssetUsedAsNestedPrefab(asset, childTransform.gameObject)) { return true; }
+            }
+
+            return false;
+        }
+        //private void CheckPrefabOriginalGUID(GameObject go)
+        //{
+        //    PrefabInstanceStatus prefabStatus = PrefabUtility.GetPrefabInstanceStatus(go);
+
+        //    if (prefabStatus == PrefabInstanceStatus.Connected || prefabStatus == PrefabInstanceStatus.Disconnected)
+        //    {
+        //        GameObject sourcePrefab = PrefabUtility.GetCorrespondingObjectFromSource(go);
+        //        string assetPath = AssetDatabase.GetAssetPath(sourcePrefab);
+        //        // Get the GUID of the selected asset (original prefab).
+        //        string prefabGUID = AssetDatabase.AssetPathToGUID(assetPath);
+        //        //Debug.Log($"{go.name}: Asset Path = {assetPath}, Asset GUID = {prefabGUID}");
+        //    }
+        //}
+
         #endregion
     }
 

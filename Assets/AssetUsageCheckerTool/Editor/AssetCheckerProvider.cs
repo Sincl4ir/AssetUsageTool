@@ -10,7 +10,7 @@ namespace Pampero.Editor
     /// </summary>
     public static class AssetCheckerProvider
     {
-        #region Public
+#region Public
         /// <summary>
         /// Tries to create an asset usage checker for the specified asset.
         /// </summary>
@@ -52,6 +52,7 @@ namespace Pampero.Editor
             searcher = assetType switch
             {
                 AssetType.Monoscript => new MonoScriptSearcher(),
+                AssetType.GameObject => new GameObjectSearcher(),
                 _ => null
             };
 
@@ -61,7 +62,7 @@ namespace Pampero.Editor
 #endregion
 
 #region Private
-private static bool GetAssetType(Object asset, out AssetType assetType)
+        private static bool GetAssetType(Object asset, out AssetType assetType)
         {
             switch (asset)
             {
