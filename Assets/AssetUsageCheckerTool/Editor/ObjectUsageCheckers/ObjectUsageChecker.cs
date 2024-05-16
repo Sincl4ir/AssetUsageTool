@@ -6,15 +6,21 @@ using UnityEngine;
 
 namespace Pampero.Editor
 {
+    public enum AssetType
+    {
+        Unknown,
+        Monoscript,
+        GameObject
+    }
     /// <summary>
     /// Base class for checking the usage of an asset in the project.
     /// </summary>
-    public abstract class ObjectUsageChecker :  IAssetUsageChecker
+    public class ObjectUsageChecker : IAssetUsageChecker
     {
         protected Object _myAsset;
-        protected string _assetGUID;
-        protected string _assetPath;
         protected List<Object> _objectsUsingAssetList;
+
+        public AssetType AssetType { get; private set; }
 
         #region Constructor
 
@@ -22,19 +28,24 @@ namespace Pampero.Editor
         /// Initializes a new instance of the ObjectUsageChecker.
         /// </summary>
         /// <param name="myAsset">The asset to check usage for.</param>
-        protected ObjectUsageChecker(Object myAsset)
+        public ObjectUsageChecker(Object myAsset, AssetType assetType)
         {
             _myAsset = myAsset;
-            _assetPath = AssetDatabase.GetAssetPath(myAsset);
-            //Debug.Log($"Selected asset path is: {_assetPath}");
-            // Get the GUID of the selected asset (original prefab).
-            _assetGUID = AssetDatabase.AssetPathToGUID(_assetPath);
-            //Debug.Log($"Selected asset ID is: {_assetGUID}");
+            AssetType = assetType;
+            //_assetPath = AssetDatabase.GetAssetPath(myAsset);
+            //_assetGUID = AssetDatabase.AssetPathToGUID(_assetPath);
             _objectsUsingAssetList = new();
         }
         #endregion
 
-        public abstract bool CheckAssetUsage(out List<Object> objectsUsingAsset);
+        public virtual bool CheckAssetUsage(out List<Object> objectsUsingAsset)
+        {
+            HandleAssetUsageSearch(_myAsset, AssetCheckType.SceneCheck);
+            HandleAssetUsageSearch(_myAsset, AssetCheckType.AssetDatabaseCheck);
+
+            objectsUsingAsset = _objectsUsingAssetList;
+            return _objectsUsingAssetList.Count > 0;
+        }
 
         /// <summary>
         /// Handles asset usage search based on the specified search type and adds the results to the list of objects using the asset.
@@ -55,7 +66,7 @@ namespace Pampero.Editor
         /// <returns>The asset usage search handler for the specified search type.</returns>
         protected IAssetUsageSearchHandler GetAssetUsageSearchHandler(AssetCheckType searchType)
         {
-            AssetCheckerProvider.HandleUsageCheckSearchers(searchType, out var searchHandler);
+            AssetCheckerProvider.GetProperAssetSearchHandler(searchType, out var searchHandler);
             return searchHandler;
         }
     }
